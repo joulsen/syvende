@@ -32,14 +32,6 @@ body {
         display: flex;
         flex-direction: column;
         align-items: center;
-        .status {
-            text-align: right;
-            width: 50%;
-            .result {
-                font-size: 1.2em;
-                font-weight: bold;
-            }
-        }
         .entry {
             display: flex;
             justify-content: space-between;
