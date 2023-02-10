@@ -1,17 +1,26 @@
+$color-bg: rgb(250, 250, 250);
+$color-sep: #ababab;
+$color-wrong: red;
+$color-yedi: rgb(255, 171, 27);
+
 body {
-    background-color: rgb(231, 238, 247);
+    background-color: $color-bg;
     text-align: center;
+    font-family: 'Comfortaa', sans-serif;
+    margin: 0;
     #title {
-        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        padding-bottom: 0.3em;
+        border-bottom: 2px solid $color-sep;
     }
     .letter-container {
         display: flex;
         justify-content: center;
-        min-height: 5em;
+        min-height: 8em;
         .letter {
-            height: 3em;
-            width: 3em;
-            border: 1px solid black;
+            height: 4em;
+            width: 4em;
+            border-radius: 0.8em;
+            border: 2px solid $color-sep;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -27,6 +36,9 @@ body {
         .letter-unavailable {
             background-color: red;
         }
+    }
+    .status {
+        font-size: larger;
     }
     .results {
         display: flex;
@@ -47,10 +59,10 @@ body {
             }
         }
         .incorrect {
-            color: red;
+            color: $color-wrong;
         }
         .fullmatch {
-            color: rgb(187, 187, 95);
+            color: $color-yedi;
         }
         .header {
             font-weight: bold;
