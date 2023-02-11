@@ -1,3 +1,4 @@
+var language = "EN";
 var legal_words = [];
 var guesses = [];
 
@@ -10,8 +11,15 @@ function letter_construct(letter){
 
 function get_letter_score(letter) {
     // ABCDEFGHIJKLMNOP(Q)RSTUV(W)XYZ
-    const letter_scores = [1, 3, 8, 2, 1, 3, 3, 4, 3, 4, 3, 2, 3,
-                           1, 2, 4, 0, 1, 2, 2, 3, 3, 0, 8, 4, 8];
+    switch(language) {
+        case "EN":
+            var letter_scores = [1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3,
+                                   1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10]
+            break;
+        case "DA":
+            var letter_scores = [1, 3, 8, 2, 1, 3, 3, 4, 3, 4, 3, 2, 3,
+                                   1, 2, 4, 0, 1, 2, 2, 3, 3, 0, 8, 4, 8];
+    }
     var charCode = letter.toUpperCase().charCodeAt();
     if (65 <= charCode && charCode <= 90) {
         return letter_scores[charCode - 65];
@@ -242,7 +250,15 @@ class Main {
 
 $(document).ready(function(){
     const answer_length = 7;
-    var response = $.get("words_da.txt", function(data){
+    switch(language){
+        case "EN":
+            var dictionary = "https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt";
+            break;
+        case "DA":
+            var dictionary = "words_da.txt";
+            break;
+    }
+    var response = $.get(dictionary, function(data){
         legal_words = data.split('\r\n');
         var max_length_words = legal_words.filter(function(word){
             return word.length == answer_length;
