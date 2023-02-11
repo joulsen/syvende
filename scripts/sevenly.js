@@ -162,35 +162,77 @@ class Main {
         this.game = new Game(word, legal_words);
         this.playset = new Playset(word);
         this.inputbox = new InputBox(word);
-        this.listen();
+        this.controls = $(".controls");
+        this.listen_keypress();
+        this.listen_click();
     }
 
-    listen() {
+    guess() {
+        let word = this.inputbox.submit();
+        if (word) {
+            return this.game.add_guess(word);
+        }
+    }
+
+    handle_keypress(key) {
+        switch(key) {
+            case 8:
+                return this.inputbox.pop();
+            case 13:
+                return this.guess();
+            case 27:
+                return this.inputbox.clear();
+            case 32:
+                return this.playset.shuffle();
+            default:
+                let letter = String.fromCharCode(key).toUpperCase();
+                return this.inputbox.add(letter);
+        }
+    }
+
+    listen_keypress() {
         const self = this;
-        $(document).on("keypress", function(event) {
-            var key = String.fromCharCode(event.which).toUpperCase();
-            if (!self.inputbox.add(key)) {
-                return false;
-            }
-        });
         $(document).on("keydown", function(event){
-            switch(event.which) {
-                case 8:
-                    return self.inputbox.pop();
-                case 13:
-                    let word = self.inputbox.submit();
-                    return self.game.add_guess(word);
-                case 27:
-                    return self.inputbox.clear();
-                case 32:
-                    return self.playset.shuffle();
-            }
-            if (!self.game.guesses_remaining) {
-                $(document).off("keypress");
-                $(document).off("keydown");
-                self.finish();
-            }
+            self.handle_keypress(event.which);
+            self.update_game_state();
         });
+    }
+
+    listen_click() {
+        const self = this;
+        this.playset.container.on("click", "> *", function(event) {
+            self.inputbox.add($(this).find(".letter").text());
+        });
+        this.controls.on("click", "> *", function(event) {
+            switch($(this).attr("id")) {
+                case "shuffle":
+                    self.playset.shuffle();
+                    break;
+                case "clear":
+                    self.inputbox.clear();
+                    break;
+                case "submit":
+                    self.guess();
+            }
+            this.game.update_game_state();
+        })
+    }
+
+    update_game_state() {
+        if (this.game.guesses_remaining <= 0) {
+            this.deafen();
+            this.finish();
+            return true;
+        }
+        return false;
+    }
+
+    deafen() {
+        console.log("deafen")
+        $(document).off("keypress");
+        $(document).off("keydown");
+        this.playset.container.off("click", "> *");
+        this.controls.off("click", "> *");
     }
 
     finish() {
