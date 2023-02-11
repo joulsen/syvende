@@ -47,7 +47,7 @@ class Playset {
     }
 }
 
-class Input {
+class InputBox {
     constructor(word) {
         this.word = word;
         this.available = word.split('');
@@ -157,31 +157,45 @@ class Game {
     }
 }
 
+class Main {
+    constructor(word, legal_words) {
+        this.game = new Game(word, legal_words);
+        this.playset = new Playset(word);
+        this.inputbox = new InputBox(word);
+        this.listen();
+    }
 
-function game_begin(word){
-    var game = new Game(word, legal_words)
-    var playset = new Playset(word);
-    var input = new Input(word);
-    $(document).on("keypress", function(event){
-        var key = String.fromCharCode(event.which).toUpperCase();
-        input.add(key);
-    })
-    $(document).on("keydown", function(event){
-        var key = event.which;
-        if (event.which == 8) {
-            input.pop();
-        } else if (event.which == 27) {
-            input.clear();
-        } else if (event.which == 13) {
-            var word = input.submit();
-            game.add_guess(word);
-        } else if (event.which == 32) {
-            playset.shuffle();
-        }
-    })
-    $("#shuffle").click(function(){
-        playset.shuffle();
-    })
+    listen() {
+        const self = this;
+        $(document).on("keypress", function(event) {
+            var key = String.fromCharCode(event.which).toUpperCase();
+            if (!self.inputbox.add(key)) {
+                return false;
+            }
+        });
+        $(document).on("keydown", function(event){
+            switch(event.which) {
+                case 8:
+                    return self.inputbox.pop();
+                case 13:
+                    let word = self.inputbox.submit();
+                    return self.game.add_guess(word);
+                case 27:
+                    return self.inputbox.clear();
+                case 32:
+                    return self.playset.shuffle();
+            }
+            if (!self.game.guesses_remaining) {
+                $(document).off("keypress");
+                $(document).off("keydown");
+                self.finish();
+            }
+        });
+    }
+
+    finish() {
+        return true;
+    }
 }
 
 $(document).ready(function(){
@@ -195,6 +209,6 @@ $(document).ready(function(){
         const c = now.getFullYear(0) * 365 + now.getDay(0);
         var word = max_length_words[c % max_length_words.length];
         word = word.toUpperCase();
-        game_begin(word, legal_words);
+        let main = new Main(word, legal_words);
     })
 })
