@@ -16,25 +16,24 @@ body {
         display: flex;
         justify-content: center;
         min-height: 8em;
-        .letter {
+        .lettertile {
+            border-radius: 0.5em;
+            border: 2px solid $color-sep;
             height: 4em;
             width: 4em;
-            border-radius: 0.8em;
-            border: 2px solid $color-sep;
+            margin: 1em;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0.5em;
-            span {
-                display: block;
+            flex-direction: column;
+            justify-content: space-between;
+            .letter {
+                margin-top: 0.5em;
                 font-size: 2em;
             }
-        }
-        .letter-used {
-            background-color: lightgray;
-        }
-        .letter-unavailable {
-            background-color: red;
+            .score {
+                font-size: 0.8em;
+                align-self: flex-end;
+                margin-right: 0.5em;
+            }
         }
     }
     .status {

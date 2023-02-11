@@ -1,10 +1,26 @@
 var legal_words = [];
 var guesses = [];
 
-function letter_construct(key){
-    var span = $("<span></span>").text(key);
-    var letter = $("<div class='letter'></div>").append(span);
-    return letter
+function letter_construct(letter){
+    var score = $("<span class='score'></span>").text(get_letter_score(letter));
+    var letter = $("<span class='letter'></span>").text(letter);
+    var object = $("<div class='lettertile'></div>").append([letter, score]);
+    return object
+}
+
+function get_letter_score(letter) {
+    // ABCDEFGHIJKLMNOP(Q)RSTUV(W)XYZ
+    const letter_scores = [1, 3, 8, 2, 1, 3, 3, 4, 3, 4, 3, 2, 3,
+                           1, 2, 4, 0, 1, 2, 2, 3, 3, 0, 8, 4, 8];
+    var charCode = letter.toUpperCase().charCodeAt();
+    if (65 <= charCode && charCode <= 90) {
+        return letter_scores[charCode - 65];
+    //ÅÆØ
+    } else if ([197, 198, 216].includes(charCode)){
+        return 4;
+    } else {
+        return -1;
+    }
 }
 
 class Playset {
@@ -39,7 +55,7 @@ class Input {
     }
 
     get value() {
-        return this.container.children().text();
+        return this.container.find(".letter").text();
     }
 
     add(letter) {
@@ -55,8 +71,8 @@ class Input {
 
     pop() {
         if (this.value) {
-            var letter = this.container.find("div:last").detach();
-            this.available.push(letter.text());
+            var lettertile = this.container.find("div:last").detach();
+            this.available.push(lettertile.find(".letter").text());
         }
         return Boolean(this.value);
     }
@@ -101,7 +117,18 @@ class Game {
     
     get_word_score(word) {
         if (this.word_is_legal(word)) {
-            return [0, 1, 2, 3, 5, 8, 10, 20][word.length];
+            var score = word.split('');
+            score.forEach(function(value, index){
+                score[index] = get_letter_score(value);
+            });
+            score = score.reduce((a,b) => a + b, 0);
+            if (word.length == this.word.length) {
+                return score * 3;
+            } else if (word.length == this.word.length - 1) {
+                return score * 2;
+            } else {
+                return score;
+            }
         }
         return 0
     }
