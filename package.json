@@ -1,0 +1,23 @@
+{
+  "name": "sevenly",
+  "version": "1.0.0",
+  "description": "sevenly",
+  "main": "sevenly.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node-sass styles -o styles"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/supercigar/syvende.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/supercigar/syvende/issues"
+  },
+  "homepage": "https://github.com/supercigar/syvende#readme",
+  "devDependencies": {
+    "node-sass": "^8.0.0"
+  }
+}
