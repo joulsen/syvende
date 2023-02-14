@@ -125,16 +125,41 @@ class InputBox {
 }
 
 class Game {
-    constructor(word, legal_words) {
+    constructor(word, legal_words, id) {
         this.word = word;
         this.legal = legal_words;
-        this.guesses = [];
-        this.scores = [];
+        this.id = id;
         this.container = {
             score: $(".status > .score > .result"),
             guessleft: $(".status > .guesses-remaining > .result"),
             history: $(".results > .header")
         };
+        this.storage = JSON.parse(localStorage.getItem("game"));
+        if (!this.storage) {
+            var new_game = true;
+        } else {
+        console.log(this.id, this.storage.id);
+            var new_game = (this.storage.id != this.id);
+        }
+        if (new_game) {
+            this.guesses = [];
+            this.scores = [];
+        } else {
+            this.guesses = this.storage.guesses;
+            this.scores = this.storage.scores;
+            this.history_add_all();
+            this.update_status();
+        }
+    }
+
+    save_local() {
+        this.storage = {
+            id: this.id,
+            score: this.score,
+            scores: this.scores,
+            guesses: this.guesses
+        }
+        localStorage.setItem("game", JSON.stringify(this.storage));
     }
 
     get score() {
@@ -173,33 +198,58 @@ class Game {
         this.container.guessleft.text(this.guesses_remaining);
     }
 
-    update_history(word, score) {
+    history_add(word, score) {
         var guessObj = $("<span class='guess'></span>").text(word);
         var scoreObj = $("<span class='score'></span>").text(score);
         var entryObj = $("<div class='entry'></div>").append([guessObj, scoreObj]);
         if (score == 0) {
             entryObj.addClass("incorrect");
         }
+        console.log(this);
         this.container.history.after(entryObj);
+    }
+
+    history_add_all() {
+        for (var i = 0; i < this.guesses.length; i++) {
+            this.history_add(this.guesses[i], this.scores[i]);
+        }
     }
 
     add_guess(guess) {
         var score = this.get_word_score(guess);
         this.guesses.push(guess);
         this.scores.push(score);
-        this.update_history(guess, score);
+        this.history_add(guess, score);
         this.update_status();
+        this.save_local();
     }
 }
 
 class Main {
-    constructor(word, legal_words) {
-        this.game = new Game(word, legal_words);
-        this.playset = new Playset(word);
-        this.inputbox = new InputBox(word);
+    constructor(legal_words) {
+        this.game = new Game(this.word, legal_words, this.id);
+        this.playset = new Playset(this.word);
+        this.inputbox = new InputBox(this.word);
         this.controls = $(".controls");
         this.listen_keypress();
         this.listen_click();
+        this.update_game_state();
+    }
+    
+    get starting_words() {
+        return legal_words.filter(function(word){
+            return word.length == 7;
+        })
+    }
+
+    get id() {
+        const now = new Date();
+        return now.getFullYear(0) * 365 + now.getDay(0);
+    }
+
+    get word() {
+        const word = this.starting_words[this.id % this.starting_words.length];
+        return word.toUpperCase();
     }
 
     guess() {
@@ -301,17 +351,10 @@ $(document).ready(function(){
     })
     var response = $.get(dictionary, function(data){
         legal_words = data.split('\r\n');
-        var max_length_words = legal_words.filter(function(word){
-            return word.length == answer_length;
-        })
-        const now = new Date();
-        const c = now.getFullYear(0) * 365 + now.getDay(0);
-        var word = max_length_words[c % max_length_words.length];
-        word = word.toUpperCase();
-        let main = new Main(word, legal_words);
+        let main = new Main(legal_words);
     });
 })
 
 $(window).on('load', (function() {
-    $("body").fadeIn(500);
+    $("body").fadeIn(1000);
 }));
