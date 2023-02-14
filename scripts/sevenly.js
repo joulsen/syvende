@@ -1,6 +1,33 @@
-var language = "EN";
+var language = "da";
 var legal_words = [];
 var guesses = [];
+
+i18next.init({
+    resources: {
+        en: {
+            translation: {
+                "button-shuffle": "Shuffle letters",
+                "button-clear": "Clear word",
+                "button-submit": "Submit word",
+                "status-score": "Total score",
+                "status-guesses-remaining": "Guesses remaining",
+                "history-guesses": "Guesses",
+                "history-points": "Points",
+            }
+        },
+        da: {
+            translation: {
+                "button-shuffle": "Bland bogstaver",
+                "button-clear": "Ryd ord",
+                "button-submit": "Spil ord",
+                "status-score": "Total score",
+                "status-guesses-remaining": "Gæt tilbage",
+                "history-guesses": "Gæt",
+                "history-points": "Points",
+            }
+        }
+    }
+});
 
 function letter_construct(letter){
     var score = $("<span class='score'></span>").text(get_letter_score(letter));
@@ -12,11 +39,11 @@ function letter_construct(letter){
 function get_letter_score(letter) {
     // ABCDEFGHIJKLMNOP(Q)RSTUV(W)XYZ
     switch(language) {
-        case "EN":
+        case "en":
             var letter_scores = [1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3,
                                    1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10]
             break;
-        case "DA":
+        case "da":
             var letter_scores = [1, 3, 8, 2, 1, 3, 3, 4, 3, 4, 3, 2, 3,
                                    1, 2, 4, 0, 1, 2, 2, 3, 3, 0, 8, 4, 8];
     }
@@ -192,6 +219,13 @@ class Main {
                 return this.inputbox.clear();
             case 32:
                 return this.playset.shuffle();
+            // ÆØÅ input is not received properly
+            case 192:
+                return this.inputbox.add("Æ");
+            case 221:
+                return this.inputbox.add("Å");
+            case 222:
+                return this.inputbox.add("Ø");
             default:
                 let letter = String.fromCharCode(key).toUpperCase();
                 return this.inputbox.add(letter);
@@ -222,7 +256,7 @@ class Main {
                 case "submit":
                     self.guess();
             }
-            this.game.update_game_state();
+            self.update_game_state();
         })
     }
 
@@ -250,14 +284,21 @@ class Main {
 
 $(document).ready(function(){
     const answer_length = 7;
+    let footer_thanks = $("#footer-thanks");
     switch(language){
-        case "EN":
-            var dictionary = "https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt";
+        case "en":
+            var dictionary = "words_en.txt";
+            i18next.changeLanguage("en");
+            footer_thanks.html("Dictionary is constructed from the alpha word list provided by the people over at <a href='https://github.com/dwyl/english-words'>dwyl</a>. Thank you.")
             break;
-        case "DA":
+        case "da":
             var dictionary = "words_da.txt";
-            break;
+            footer_thanks.html("Ordbogen er skabt ud fra <a href='https://korpus.dsl.dk/resources/details/flexikon.html'>flexikon</a> publiceret af Det Danske Sprog og Litteraturnævn. Mange tak.")
+            i18next.changeLanguage("da");
     }
+    $("[data-i18n]").each(function() {
+        $(this).text(i18next.t($(this).attr("data-i18n")))
+    })
     var response = $.get(dictionary, function(data){
         legal_words = data.split('\r\n');
         var max_length_words = legal_words.filter(function(word){
@@ -268,5 +309,9 @@ $(document).ready(function(){
         var word = max_length_words[c % max_length_words.length];
         word = word.toUpperCase();
         let main = new Main(word, legal_words);
-    })
+    });
 })
+
+$(window).on('load', (function() {
+    $("body").fadeIn(500);
+}));

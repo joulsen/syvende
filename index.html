@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Yedi</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/i18next/22.4.9/i18next.min.js"></script>
     <script src="scripts/sevenly.js"></script>
     <link rel="stylesheet" href="styles/sevenly.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,33 +14,42 @@
 </head>
 <body>
     <h1 id="title">Yedi</h1>
-    <div class="controls">
-        <button id="shuffle">Bland bogstaver</button>
+    <div class="main">
+        <div class="controls">
+            <button data-i18n="button-shuffle" id="shuffle"></button>
+        </div>
+        <div class="playset">
+            <div class="letter-container"></div>
+        </div>
+        <div class="input">
+            <div class="letter-container"></div>
+        </div>
+        <div class="controls">
+            <button data-i18n="button-clear" id="clear"></button>
+            <button data-i18n="button-submit" id="submit">Spil ord</button>
+        </div>
+        <div class="status">
+            <p class="score">
+                <span data-i18n="status-score"></span>:
+                <span class="result">0</span>
+            </p>
+            <p class="guesses-remaining">
+                <span data-i18n="status-guesses-remaining"></span>:
+                <span class="result">5</span>
+            </p>
+        </div>
+        <div class="results">
+            <div class="entry header">
+                <span data-i18n="history-guesses" class="guess"></span>
+                <span data-i18n="history-points" class="score"></span>
+            </div>
+        </div>
     </div>
-    <div class="playset">
-        <div class="letter-container"></div>
-    </div>
-    <div class="input">
-        <div class="letter-container"></div>
-    </div>
-    <div class="controls">
-        <button id="clear">Ryd ord</button>
-        <button id="submit">Spil ord</button>
-    </div>
-    <div class="status">
-        <p class="score">
-            Total score: 
-            <span class="result">0</span>
-        </p>
-        <p class="guesses-remaining">
-            Gæt tilbage:
-            <span class="result">5</span>
-        </p>
-    </div>
-    <div class="results">
-        <div class="entry header">
-            <span class="guess">Gæt</span>
-            <span class="score">Point</span>
+    <div class="footer">
+        <div class="left"></div>
+        <div class="center"></div>
+        <div class="right">
+            <p id="footer-thanks"></p>
         </div>
     </div>
 </body>

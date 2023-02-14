@@ -1,5 +1,6 @@
 *.css
 *.css.map
 words_da.txt
+words_en.txt
 node_modules/
 package-lock.json

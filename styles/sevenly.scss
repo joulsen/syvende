@@ -14,9 +14,11 @@ $color-yedi: rgb(255, 171, 27);
 }
 
 body {
+    display: none;
     background-color: $color-bg;
     text-align: center;
     font-family: 'Comfortaa', sans-serif;
+    flex-direction: column;
     margin: 0;
     #title {
         padding-bottom: 0.3em;
@@ -83,6 +85,19 @@ body {
         .header {
             font-weight: bold;
             border-bottom: 1px solid black;
+        }
+    }
+    .footer {
+        position: absolute;
+        width: 95%;
+        bottom: 0%;
+        margin: 0.5em;
+        font-size: small;
+        display: flex;
+        justify-content: flex-end;
+        .right {
+            text-align: right;
+            width: 40%;
         }
     }
 }

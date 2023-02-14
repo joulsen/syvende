@@ -19,5 +19,8 @@
   "homepage": "https://github.com/supercigar/syvende#readme",
   "devDependencies": {
     "node-sass": "^8.0.0"
+  },
+  "dependencies": {
+    "i18next": "^22.4.9"
   }
 }
